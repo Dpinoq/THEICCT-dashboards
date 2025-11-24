@@ -1,0 +1,712 @@
+<!DOCTYPE html> <html lang="es"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>Dashboard ICCT - Colombia y Chile 2025</title> <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <style> * { margin: 0; padding: 0; box-sizing: border-box; } 
+    body {
+        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        background: linear-gradient(135deg, #007D93 0%, #414D56 100%);
+        padding: 20px;
+        color: #333;
+    }
+    
+    .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+    
+    .header {
+        text-align: center;
+        margin-bottom: 40px;
+        padding-bottom: 20px;
+        border-bottom: 3px solid #007D93;
+    }
+    
+    .header h1 {
+        color: #007D93;
+        font-size: 2.5em;
+        margin-bottom: 10px;
+        font-weight: 700;
+    }
+    
+    .header p {
+        color: #414D56;
+        font-size: 1.1em;
+        font-weight: 400;
+    }
+    
+    .metrics-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin-bottom: 40px;
+    }
+    
+    .metric-card {
+        background: linear-gradient(135deg, #007D93 0%, #414D56 100%);
+        color: white;
+        padding: 25px;
+        border-radius: 15px;
+        text-align: center;
+        box-shadow: 0 5px 15px rgba(0, 125, 147, 0.4);
+        transition: transform 0.3s;
+    }
+    
+    .metric-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 125, 147, 0.5);
+    }
+    
+    .metric-card .number {
+        font-size: 3em;
+        font-weight: 700;
+        margin: 10px 0;
+    }
+    
+    .metric-card .label {
+        font-size: 0.9em;
+        opacity: 0.9;
+        font-weight: 300;
+    }
+    
+    .charts-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+        gap: 30px;
+        margin-bottom: 40px;
+    }
+    
+    .chart-container {
+        background: #f8f9fa;
+        padding: 25px;
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    
+    .chart-container h3 {
+        color: #007D93;
+        margin-bottom: 20px;
+        font-size: 1.3em;
+        font-weight: 600;
+    }
+    
+    .full-width {
+        grid-column: 1 / -1;
+    }
+    
+    .messages-section {
+        background: #f8f9fa;
+        padding: 30px;
+        border-radius: 15px;
+        margin-bottom: 30px;
+    }
+    
+    .messages-section h3 {
+        color: #007D93;
+        margin-bottom: 20px;
+        font-size: 1.5em;
+        font-weight: 600;
+    }
+    
+    .message-item {
+        background: white;
+        padding: 20px;
+        margin-bottom: 15px;
+        border-left: 4px solid #007D93;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+    
+    .message-item strong {
+        color: #414D56;
+        display: block;
+        margin-bottom: 8px;
+        font-size: 1.1em;
+        font-weight: 600;
+    }
+    
+    .media-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+        margin-top: 20px;
+    }
+    
+    .media-card {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    }
+    
+    .media-card h4 {
+        color: #007D93;
+        margin-bottom: 10px;
+        font-weight: 600;
+    }
+    
+    .media-card ul {
+        list-style: none;
+    }
+    
+    .media-card li {
+        padding: 8px 0;
+        border-bottom: 1px solid #eee;
+        font-weight: 400;
+    }
+    
+    .media-card li:last-child {
+        border-bottom: none;
+    }
+    
+    .tag {
+        display: inline-block;
+        background: #007D93;
+        color: white;
+        padding: 5px 15px;
+        border-radius: 20px;
+        margin: 5px;
+        font-size: 0.85em;
+        font-weight: 500;
+    }
+    
+    .tags-container {
+        margin-top: 20px;
+        text-align: center;
+    }
+
+    .category-badge {
+        display: inline-block;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 0.9em;
+        font-weight: 600;
+        margin-right: 10px;
+    }
+
+    .cat-sostenibilidad { background: #398439; color: white; }
+    .cat-movilidad { background: #007D93; color: white; }
+    .cat-tecnologia { background: #632A7A; color: white; }
+    .cat-regulacion { background: #9c1b3e; color: white; }
+    .cat-accesibilidad { background: #F1AE1D; color: white; }
+</style>
+</head> <body> <div class="container"> <div class="header"> <h1>📊 Dashboard de Cobertura Mediática ICCT</h1> <p>Colombia y Chile | Periodo: Enero - Noviembre 2025</p> <p style="font-size: 0.9em; margin-top: 10px; color: #999; font-weight: 300;">The International Council on Clean Transportation</p> </div> 
+    <!-- Métricas Principales -->
+    <div class="metrics-grid">
+        <div class="metric-card">
+            <div class="label">Total Artículos</div>
+            <div class="number">44</div>
+            <div class="label">Publicaciones</div>
+        </div>
+        <div class="metric-card">
+            <div class="label">Colombia</div>
+            <div class="number">23</div>
+            <div class="label">Artículos</div>
+        </div>
+        <div class="metric-card">
+            <div class="label">Chile</div>
+            <div class="number">21</div>
+            <div class="label">Artículos</div>
+        </div>
+        <div class="metric-card">
+            <div class="label">Engagement Total</div>
+            <div class="number">7.2K</div>
+            <div class="label">Interacciones</div>
+        </div>
+        <div class="metric-card">
+            <div class="label">AVE Estimado</div>
+            <div class="number">$780K</div>
+            <div class="label">USD</div>
+        </div>
+        <div class="metric-card">
+            <div class="label">Medios Únicos</div>
+            <div class="number">32</div>
+            <div class="label">Publicaciones</div>
+        </div>
+    </div>
+    
+    <!-- Gráficos -->
+    <div class="charts-grid">
+        <div class="chart-container">
+            <h3>📍 Distribución por País</h3>
+            <canvas id="paisChart"></canvas>
+        </div>
+        
+        <div class="chart-container">
+            <h3>😊 Análisis de Sentimiento</h3>
+            <canvas id="sentimientoChart"></canvas>
+        </div>
+        
+        <div class="chart-container full-width">
+            <h3>📈 Evolución Temporal de Publicaciones (Ene-Nov 2025)</h3>
+            <canvas id="timelineChart"></canvas>
+        </div>
+        
+        <div class="chart-container">
+            <h3>🏆 Top 10 Medios Destacados</h3>
+            <canvas id="mediosChart"></canvas>
+        </div>
+        
+        <div class="chart-container">
+            <h3>📑 Distribución por Categoría Temática</h3>
+            <canvas id="temasChart"></canvas>
+        </div>
+    </div>
+    
+    <!-- Categorías Temáticas Detalladas -->
+    <div class="messages-section">
+        <h3>📊 Análisis por Categoría Temática</h3>
+        
+        <div class="message-item">
+            <strong><span class="category-badge cat-sostenibilidad">🌱 SOSTENIBILIDAD</span> 15 artículos (34%)</strong>
+            <p style="font-weight: 400;"><strong style="font-weight: 600;">Descripción:</strong> Enfoques integrales para mejorar la sostenibilidad del transporte: descarbonización, eficiencia energética, desempeño ambiental y soluciones cero emisiones.</p>
+            <p style="margin-top: 10px; font-weight: 400;"><strong style="font-weight: 600;">Artículos clave:</strong><br>
+            • Emisiones CO₂ de vehículos terrestres alcanzarán pico en 2025 (El Espectador - Enero)<br>
+            • Descarbonización del transporte de carga representa 24-29% de emisiones GEI<br>
+            • Vehículos eléctricos emiten 73% menos CO₂ en ciclo de vida (Julio)<br>
+            • Autos eléctricos 4 veces más limpios que gasolina (Emol - Julio)<br>
+            • Reducción de emisiones y cumplimiento Acuerdo de París</p>
+        </div>
+        
+        <div class="message-item">
+            <strong><span class="category-badge cat-movilidad">🚌 MOVILIDAD LIMPIA</span> 18 artículos (41%)</strong>
+            <p style="font-weight: 400;"><strong style="font-weight: 600;">Descripción:</strong> Promoción y análisis de vehículos eléctricos, buses eléctricos, flotas cero emisiones y planes de transición energética.</p>
+            <p style="margin-top: 10px; font-weight: 400;"><strong style="font-weight: 600;">Artículos clave:</strong><br>
+            • Bogotá: buses eléctricos reducen 73% emisiones GEI - Alianza ZEBRA (Mayo)<br>
+            • Ibagué: proyecto 50 buses eléctricos con ZEBRA/C40/DNP (Marzo)<br>
+            • ACERA y CMS firman acuerdo electrificación transporte Chile (Noviembre)<br>
+            • Flotas comerciales eléctricas ahorran 50% costos operativos (Colombia)<br>
+            • ITM incorpora buses eléctricos fabricación 100% local (Septiembre)<br>
+            • China vendió 230 mil buses y camiones cero emisiones en 2024</p>
+        </div>
+        
+        <div class="message-item">
+            <strong><span class="category-badge cat-tecnologia">⚡ TECNOLOGÍA LIMPIA</span> 6 artículos (14%)</strong>
+            <p style="font-weight: 400;"><strong style="font-weight: 600;">Descripción:</strong> Tecnologías emergentes: hidrógeno, biocombustibles, innovaciones que sustituyen combustibles fósiles, desarrollo de baterías.</p>
+            <p style="margin-top: 10px; font-weight: 400;"><strong style="font-weight: 600;">Artículos clave:</strong><br>
+            • Chile: expansión cadena valor litio - USD $12,000 millones potencial (Noviembre)<br>
+            • Demanda baterías crecerá de 0.5 GWh (2024) a 38 GWh (2035)<br>
+            • Hidrógeno verde vs vehículos eléctricos a batería (El Desconcierto - Abril)<br>
+            • E-metanol para descarbonización marítima (Febrero)<br>
+            • Tecnología híbrida enchufable: consumo real vs homologado (Abril)</p>
+        </div>
+        
+        <div class="message-item">
+            <strong><span class="category-badge cat-regulacion">📜 REGULACIÓN</span> 3 artículos (7%)</strong>
+            <p style="font-weight: 400;"><strong style="font-weight: 600;">Descripción:</strong> Marcos normativos, incentivos fiscales, decisiones políticas que impulsan movilidad sostenible.</p>
+            <p style="margin-top: 10px; font-weight: 400;"><strong style="font-weight: 600;">Artículos clave:</strong><br>
+            • Norma Euro 7: límites estrictos para vehículos eléctricos (Octubre)<br>
+            • Llamado actualizar normas eficiencia vehicular México (Marzo)<br>
+            • Brasil-México: memorando buses cero emisiones para 2040 (Noviembre)</p>
+        </div>
+        
+        <div class="message-item">
+            <strong><span class="category-badge cat-accesibilidad">🤝 ACCESIBILIDAD</span> 2 artículos (5%)</strong>
+            <p style="font-weight: 400;"><strong style="font-weight: 600;">Descripción:</strong> Dimensión social: equidad en acceso a soluciones limpias, justicia climática, salud ambiental.</p>
+            <p style="margin-top: 10px; font-weight: 400;"><strong style="font-weight: 600;">Artículos clave:</strong><br>
+            • Vehículos eléctricos más económicos mejoran calidad del aire (Septiembre)<br>
+            • Reducción precios VE: 37% menos (2021-2024) facilita acceso equitativo</p>
+        </div>
+    </div>
+    
+    <!-- Mensajes Clave -->
+    <div class="messages-section">
+        <h3>🔑 Mensajes Clave por País</h3>
+        
+        <div class="message-item">
+            <strong style="font-weight: 600;">🇨🇴 COLOMBIA - Liderazgo en Electromovilidad Urbana</strong>
+            <p style="font-weight: 400;">• <strong style="font-weight: 600;">Bogotá referente latinoamericano:</strong> Buses eléctricos reducen 73% emisiones GEI vs diésel<br>
+            • <strong style="font-weight: 600;">Expansión regional:</strong> Ibagué planea incorporar 50 buses eléctricos con cooperación internacional<br>
+            • <strong style="font-weight: 600;">Impacto económico:</strong> Flotas eléctricas comerciales generan 50% ahorro en costos operativos<br>
+            • <strong style="font-weight: 600;">Innovación local:</strong> ITM presenta primeros buses eléctricos de fabricación 100% colombiana<br>
+            • <strong style="font-weight: 600;">Calidad del aire:</strong> Transición eléctrica mejora significativamente aire urbano y salud pública</p>
+        </div>
+        
+        <div class="message-item">
+            <strong style="font-weight: 600;">🇨🇱 CHILE - Cadena de Valor del Litio y Descarbonización</strong>
+            <p style="font-weight: 400;">• <strong style="font-weight: 600;">Potencial económico:</strong> USD $12,000 millones anuales diversificando industria del litio<br>
+            • <strong style="font-weight: 600;">Crecimiento exponencial:</strong> Demanda baterías pasará de 0.5 GWh (2024) a 38 GWh (2035)<br>
+            • <strong style="font-weight: 600;">Alianzas estratégicas:</strong> ACERA y CMS firman acuerdo para electrificación regional<br>
+            • <strong style="font-weight: 600;">Liderazgo regional:</strong> Chile representó región en evento ICCT en Reino Unido<br>
+            • <strong style="font-weight: 600;">32,000 empleos:</strong> Proyección de nuevos puestos en industria de baterías para 2035</p>
+        </div>
+        
+        <div class="message-item">
+            <strong style="font-weight: 600;">🌎 REGIONAL - Evidencia Científica sobre Vehículos Eléctricos</strong>
+            <p style="font-weight: 400;">• <strong style="font-weight: 600;">Reducción emisiones:</strong> Vehículos eléctricos emiten 73% menos CO₂ en ciclo de vida completo<br>
+            • <strong style="font-weight: 600;">Superioridad ambiental:</strong> Autos eléctricos 4 veces más limpios que vehículos a gasolina<br>
+            • <strong style="font-weight: 600;">Costo-beneficio:</strong> Precios VE cayeron 37% (2021-2024), vs +24% vehículos combustión<br>
+            • <strong style="font-weight: 600;">Pico emisiones:</strong> 2025 marcará punto máximo de emisiones CO₂ del transporte terrestre<br>
+            • <strong style="font-weight: 600;">Realidad híbridos:</strong> Consumo real 3-5 veces mayor que valores homologados</p>
+        </div>
+    </div>
+    
+    <!-- Palabras Clave -->
+    <div class="messages-section">
+        <h3>🏷️ Palabras Clave Más Frecuentes</h3>
+        <div class="tags-container">
+            <span class="tag">Electromovilidad</span>
+            <span class="tag">Vehículos Eléctricos</span>
+            <span class="tag">Buses Eléctricos</span>
+            <span class="tag">Emisiones CO₂</span>
+            <span class="tag">Descarbonización</span>
+            <span class="tag">Transporte Público</span>
+            <span class="tag">Litio</span>
+            <span class="tag">Baterías</span>
+            <span class="tag">Eficiencia Energética</span>
+            <span class="tag">Gases Efecto Invernadero</span>
+            <span class="tag">Movilidad Sostenible</span>
+            <span class="tag">Calidad del Aire</span>
+            <span class="tag">Flotas Cero Emisiones</span>
+            <span class="tag">ZEBRA</span>
+            <span class="tag">C40 Cities</span>
+            <span class="tag">Hidrógeno Verde</span>
+        </div>
+    </div>
+    
+    <!-- Medios y Periodistas -->
+    <div class="messages-section">
+        <h3>📰 Medios y Periodistas Destacados</h3>
+        <div class="media-grid">
+            <div class="media-card">
+                <h4>🇨🇴 Top Medios Colombia</h4>
+                <ul>
+                    <li><strong>elcarrocolombiano.com</strong> - 4 art.</li>
+                    <li><strong>El Espectador</strong> - 3 art.</li>
+                    <li><strong>Blu Radio</strong> - 2 art.</li>
+                    <li><strong>Pulzo</strong> - 2 art.</li>
+                    <li><strong>bogota.gov.co</strong> - 2 art.</li>
+                    <li>El Nuevo Día, El Olfato, Extra Colombia</li>
+                </ul>
+            </div>
+            
+            <div class="media-card">
+                <h4>🇨🇱 Top Medios Chile</h4>
+                <ul>
+                    <li><strong>Revista Digital Minera</strong> - 3 art.</li>
+                    <li><strong>Emol</strong> - 2 art.</li>
+                    <li><strong>El Desconcierto</strong> - 2 art.</li>
+                    <li><strong>Portal Minero</strong> - 1 art.</li>
+                    <li><strong>CNN Chile</strong> - 1 art.</li>
+                    <li>Soy Chile, Sustentable, EMB, Mediabanco</li>
+                </ul>
+            </div>
+            
+            <div class="media-card">
+                <h4>✍️ Periodistas Destacados</h4>
+                <ul>
+                    <li><strong>Paola Reyes Bohórquez</strong> (Colombia)</li>
+                    <li><strong>Jonathan Naveas</strong> (Chile)</li>
+                    <li><strong>Agustín de Vicente</strong> (Chile)</li>
+                    <li><strong>Leo Mellado</strong> (México/Regional)</li>
+                    <li><strong>Cristian Recabarren Ortiz</strong> (Chile)</li>
+                    <li>Pablo Pavéz Oyarzun, Danna Londoño</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Voceros -->
+    <div class="messages-section">
+        <h3>🎤 Voceros y Expertos ICCT Citados</h3>
+        <div class="message-item">
+            <strong style="font-weight: 600;">ICCT - The International Council on Clean Transportation</strong>
+            <p style="font-weight: 400;">• <strong style="font-weight: 600;">Leticia Pineda</strong> - Directora Regional para México y Canadá (citada en 8 artículos)<br>
+            • <strong style="font-weight: 600;">Felipe Rodríguez</strong> - Director de Vehículos Pesados<br>
+            • <strong style="font-weight: 600;">Liuhanzi Yang</strong> - ICCT Beijing (análisis mercado chino)<br>
+            • <strong style="font-weight: 600;">Dr. Jamie Kelly</strong> - CREA, autor principal estudios emisiones<br>
+            • <strong style="font-weight: 600;">Hussein Basma</strong> - Investigador (infraestructura de carga)</p>
+        </div>
+        <div class="message-item">
+            <strong style="font-weight: 600;">Organizaciones Aliadas y Referenciadas</strong>
+            <p style="font-weight: 400;">• <strong style="font-weight: 600;">ZEBRA</strong> - Zero Emission Bus Rapid-deployment Accelerator<br>
+            • <strong style="font-weight: 600;">C40 Cities</strong> - Red global de ciudades líderes climáticas<br>
+            • <strong style="font-weight: 600;">ACERA</strong> - Asociación Chilena de Energías Renovables y Almacenamiento<br>
+            • <strong style="font-weight: 600;">CMS</strong> - Centro de Movilidad Sostenible (Chile)<br>
+            • <strong style="font-weight: 600;">DNP</strong> - Departamento Nacional de Planeación (Colombia)</p>
+        </div>
+    </div>
+    
+    <!-- Coyuntura -->
+    <div class="messages-section">
+        <h3>📅 Coyuntura y Contexto de Publicaciones (Ene-Nov 2025)</h3>
+        
+        <div class="message-item">
+            <strong style="font-weight: 600;">Enero - Marzo 2025: Regulación y Análisis de Emisiones</strong>
+            <p style="font-weight: 400;">• Publicación estudios sobre pico emisiones CO₂ transporte terrestre<br>
+            • Debate normas eficiencia energética vehicular en región<br>
+            • Proyectos electrificación transporte público (Ibagué, Bogotá)<br>
+            • Análisis híbridos enchufables vs eléctricos puros</p>
+        </div>
+        
+        <div class="message-item">
+            <strong style="font-weight: 600;">Abril - Junio 2025: Tecnología y Competitividad</strong>
+            <p style="font-weight: 400;">• Comparativas rendimiento: eléctricos vs combustión vs hidrógeno<br>
+            • Alertas sobre retraso vehículos eléctricos europeos vs chinos<br>
+            • Análisis costo-beneficio flotas comerciales eléctricas<br>
+            • Debate aranceles vehículos importados y acceso a movilidad limpia</p>
+        </div>
+        
+        <div class="message-item">
+            <strong style="font-weight: 600;">Julio - Septiembre 2025: Evidencia Científica y Casos de Éxito</strong>
+            <p style="font-weight: 400;">• Publicación estudios: VE emiten 73% menos CO₂ en ciclo de vida<br>
+            • Lanzamiento buses eléctricos fabricación local (ITM Colombia)<br>
+            • Arancel buses eléctricos: impacto en transición energética<br>
+            • Norma Euro 7: nuevos estándares para vehículos eléctricos</p>
+        </div>
+        
+        <div class="message-item">
+            <strong style="font-weight: 600;">Octubre - Noviembre 2025: Alianzas y Cadena de Valor</strong>
+            <p style="font-weight: 400;">• ACERA-CMS: acuerdo estratégico electrificación transporte Chile<br>
+            • Reportes industria litio: USD $12,000 millones potencial anual<br>
+            • Memorando Brasil-México: 100% buses cero emisiones para 2040<br>
+            • Eventos internacionales descarbonización (ICCT UK, COP30)</p>
+        </div>
+    </div>
+
+    <!-- AVE Detallado -->
+    <div class="messages-section">
+        <h3>💰 AVE (Advertising Value Equivalent) - Análisis Detallado</h3>
+        
+        <div class="message-item">
+            <strong style="font-weight: 600;">Metodología de Cálculo AVE</strong>
+            <p style="font-weight: 400;">El AVE se calcula considerando:<br>
+            • Alcance del medio (UVM - Unique Visitors Monthly)<br>
+            • Engagement generado (likes, shares, comentarios)<br>
+            • Posicionamiento de marca ICCT como fuente experta<br>
+            • Valor publicitario equivalente en medios digitales</p>
+        </div>
+        
+        <div class="media-grid">
+            <div class="media-card">
+                <h4>🇨🇴 Colombia - AVE: $420,000 USD</h4>
+                <ul>
+                    <li><strong>El Espectador:</strong> $85,000</li>
+                    <li><strong>elcarrocolombiano:</strong> $62,000</li>
+                    <li><strong>Blu Radio:</strong> $58,000</li>
+                    <li><strong>Pulzo:</strong> $48,000</li>
+                    <li><strong>Otros medios:</strong> $167,000</li>
+                </ul>
+            </div>
+            
+            <div class="media-card">
+                <h4>🇨🇱 Chile - AVE: $360,000 USD</h4>
+                <ul>
+                    <li><strong>Emol:</strong> $95,000</li>
+                    <li><strong>El Desconcierto:</strong> $52,000</li>
+                    <li><strong>Rev. Digital Minera:</strong> $48,000</li>
+                    <li><strong>CNN Chile:</strong> $45,000</li>
+                    <li><strong>Otros medios:</strong> $120,000</li>
+                </ul>
+            </div>
+            
+            <div class="media-card">
+                <h4>📊 Resumen Total</h4>
+                <ul>
+                    <li><strong>AVE Total:</strong> $780,000 USD</li>
+                    <li><strong>AVE Promedio/Artículo:</strong> $17,727</li>
+                    <li><strong>Engagement Total:</strong> 7,200</li>
+                    <li><strong>Alcance Estimado:</strong> 15M+ impresiones</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Configuración común para todos los gráficos
+    const commonOptions = {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+            legend: {
+                position: 'bottom',
+                labels: {
+    font: { 
+                        size: 12,
+                        family: "'Helvetica Neue', Helvetica, Arial, sans-serif"
+                    },
+                    padding: 15
+                }
+            }
+        }
+    };
+    
+    // 1. Gráfico de Distribución por País
+    new Chart(document.getElementById('paisChart'), {
+        type: 'bar',
+        data: {
+            labels: ['Colombia', 'Chile'],
+            datasets: [{
+                label: 'Número de Artículos',
+                data: [23, 21],
+                backgroundColor: ['#007D93', '#414D56'],
+                borderRadius: 10,
+                borderWidth: 2,
+                borderColor: ['#006680', '#2f373e']
+            }]
+        },
+        options: {
+            ...commonOptions,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: { stepSize: 5 },
+                    grid: { color: '#f0f0f0' }
+                }
+            }
+        }
+    });
+    
+    // 2. Gráfico de Sentimiento
+    new Chart(document.getElementById('sentimientoChart'), {
+        type: 'doughnut',
+        data: {
+            labels: ['Neutral', 'Positivo', 'Negativo'],
+            datasets: [{
+                data: [44, 0, 0],
+                backgroundColor: ['#95a5a6', '#2ecc71', '#e74c3c'],
+                borderWidth: 3,
+                borderColor: '#fff'
+            }]
+        },
+        options: {
+            ...commonOptions,
+            plugins: {
+                ...commonOptions.plugins,
+                legend: {
+                    position: 'right'
+                }
+            }
+        }
+    });
+    
+    // 3. Timeline Mensual (Enero - Noviembre)
+    new Chart(document.getElementById('timelineChart'), {
+        type: 'line',
+        data: {
+            labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov'],
+            datasets: [
+                {
+                    label: 'Colombia',
+                    data: [3, 2, 3, 3, 2, 2, 2, 1, 2, 2, 1],
+                    borderColor: '#007D93',
+                    backgroundColor: 'rgba(0, 125, 147, 0.1)',
+                    tension: 0.4,
+                    fill: true,
+                    borderWidth: 3,
+                    pointRadius: 5,
+                    pointHoverRadius: 7
+                },
+                {
+                    label: 'Chile',
+                    data: [2, 1, 2, 2, 2, 1, 3, 1, 2, 3, 2],
+                    borderColor: '#414D56',
+                    backgroundColor: 'rgba(65, 77, 86, 0.1)',
+                    tension: 0.4,
+                    fill: true,
+                    borderWidth: 3,
+                    pointRadius: 5,
+                    pointHoverRadius: 7
+                }
+            ]
+        },
+        options: {
+            ...commonOptions,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: { stepSize: 1 },
+                    grid: { color: '#f0f0f0' }
+                },
+                x: {
+                    grid: { display: false }
+                }
+            }
+        }
+    });
+    
+    // 4. Top 10 Medios
+    new Chart(document.getElementById('mediosChart'), {
+        type: 'bar',
+        data: {
+            labels: [
+                'elcarrocolombiano.com',
+                'El Espectador',
+                'Rev. Digital Minera',
+                'Blu Radio',
+                'Pulzo',
+                'Emol',
+                'El Desconcierto',
+                'bogota.gov.co',
+                'Portal Minero',
+                'CNN Chile'
+            ],
+            datasets: [{
+                label: 'Artículos Publicados',
+                data: [4, 3, 3, 2, 2, 2, 2, 2, 1, 1],
+                backgroundColor: '#007D93',
+                borderRadius: 8,
+                borderWidth: 2,
+                borderColor: '#006680'
+            }]
+        },
+        options: {
+            ...commonOptions,
+            indexAxis: 'y',
+            scales: {
+                x: {
+                    beginAtZero: true,
+                    ticks: { stepSize: 1 },
+                    grid: { color: '#f0f0f0' }
+                },
+                y: {
+                    grid: { display: false }
+                }
+            }
+        }
+    });
+    
+    // 5. Categorías Temáticas (Usando Secondary Colors ICCT)
+    new Chart(document.getElementById('temasChart'), {
+        type: 'pie',
+        data: {
+            labels: [
+                'Movilidad Limpia (41%)',
+                'Sostenibilidad (34%)',
+                'Tecnología Limpia (14%)',
+                'Regulación (7%)',
+                'Accesibilidad (5%)'
+            ],
+            datasets: [{
+                data: [18, 15, 6, 3, 2],
+                backgroundColor: [
+                    '#007D93',  // Movilidad (ICCT Blue)
+                    '#398439',  // Sostenibilidad (Green)
+                    '#632A7A',  // Tecnología (Purple)
+                    '#9c1b3e',  // Regulación (Red)
+                    '#F1AE1D'   // Accesibilidad (Orange Yellow)
+                ],
+                borderWidth: 3,
+                borderColor: '#fff'
+            }]
+        },
+        options: {
+            ...commonOptions,
+            plugins: {
+                ...commonOptions.plugins,
+                legend: {
+                    position: 'right',
+                    labels: {
+                        font: { 
+                            size: 11,
+                            family: "'Helvetica Neue', Helvetica, Arial, sans-serif"
+                        },
+                        padding: 12
+                    }
+                }
+            }
+        }
+    });
+</script>
+</body> </html>
