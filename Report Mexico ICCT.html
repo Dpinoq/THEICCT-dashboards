@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard ICCT - México 2025</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, #007D93 0%, #414D56 100%);
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #007D93;
+        }
+        
+        .header h1 {
+            color: #007D93;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .header p {
+            color: #414D56;
+            font-size: 1.1em;
+            font-weight: 400;
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .metric-card {
+            background: linear-gradient(135deg, #007D93 0%, #414D56 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 125, 147, 0.4);
+            transition: transform 0.3s;
+        }
+        
+        .metric-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 125, 147, 0.5);
+        }
+        
+        .metric-card .number {
+            font-size: 3em;
+            font-weight: 700;
+            margin: 10px 0;
+        }
+        
+        .metric-card .label {
+            font-size: 0.9em;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+        
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .chart-container {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .chart-container h3 {
+            color: #007D93;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+            font-weight: 600;
+        }
+        
+        .full-width {
+            grid-column: 1 / -1;
+        }
+        
+        .messages-section {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .messages-section h3 {
+            color: #007D93;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            font-weight: 600;
+        }
+        
+        .message-item {
+            background: white;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 4px solid #007D93;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .message-item strong {
+            color: #414D56;
+            display: block;
+            margin-bottom: 8px;
+            font-size: 1.1em;
+            font-weight: 600;
+        }
+        
+        .media-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .media-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        
+        .media-card h4 {
+            color: #007D93;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        .media-card ul {
+            list-style: none;
+        }
+        
+        .media-card li {
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+            font-weight: 400;
+        }
+        
+        .media-card li:last-child {
+            border-bottom: none;
+        }
+        
+        .tag {
+            display: inline-block;
+            background: #007D93;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            margin: 5px;
+            font-size: 0.85em;
+            font-weight: 500;
+        }
+        
+        .tags-container {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .category-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 600;
+            margin-right: 10px;
+        }
+
+        .cat-sostenibilidad { background: #398439; color: white; }
+        .cat-movilidad { background: #007D93; color: white; }
+        .cat-tecnologia { background: #632A7A; color: white; }
+        .cat-regulacion { background: #9c1b3e; color: white; }
+        .cat-accesibilidad { background: #F1AE1D; color: white; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 Dashboard de Cobertura Mediática ICCT</h1>
+            <p>🇲🇽 México | Periodo: Enero - Noviembre 2025</p>
+            <p style="font-size: 0.9em; margin-top: 10px; color: #999; font-weight: 300;">The International Council on Clean Transportation</p>
+        </div>
+        
+        <!-- Métricas Principales -->
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="label">Total Artículos</div>
+                <div class="number">58</div>
+                <div class="label">Publicaciones</div>
+            </div>
+            <div class="metric-card">
+                <div class="label">Menciones ICCT</div>
+                <div class="number">58</div>
+                <div class="label">100% Cobertura</div>
+            </div>
+            <div class="metric-card">
+                <div class="label">Engagement Total</div>
+                <div class="number">6.2K</div>
+                <div class="label">Interacciones</div>
+            </div>
+            <div class="metric-card">
+                <div class="label">AVE Estimado</div>
+                <div class="number">$420K</div>
+                <div class="label">USD</div>
+            </div>
+            <div class="metric-card">
+                <div class="label">Medios Únicos</div>
+                <div class="number">28</div>
+                <div class="label">Publicaciones</div>
+            </div>
+            <div class="metric-card">
+                <div class="label">Alcance Estimado</div>
+                <div class="number">35M+</div>
+                <div class="label">Impresiones</div>
+            </div>
+        </div>
+        
+        <!-- Gráficos -->
+        <div class="charts-grid">
+            <div class="chart-container">
+                <h3>😊 Análisis de Sentimiento</h3>
+                <canvas id="sentimientoChart"></canvas>
+            </div>
+            
+            <div class="chart-container">
+                <h3>📑 Distribución por Categoría Temática</h3>
+                <canvas id="temasChart"></canvas>
+            </div>
+            
+            <div class="chart-container full-width">
+                <h3>📈 Evolución Temporal de Publicaciones (Ene-Nov 2025)</h3>
+                <canvas id="timelineChart"></canvas>
+            </div>
+            
+            <div class="chart-container full-width">
+                <h3>🏆 Top 10 Medios Destacados</h3>
+                <canvas id="mediosChart"></canvas>
+            </div>
+        </div>
+        
+        <!-- Categorías Temáticas Detalladas -->
+        <div class="messages-section">
+            <h3>📊 Análisis por Categoría Temática</h3>
+            
+            <div class="message-item">
+                <strong><span class="category-badge cat-regulacion">📜 REGULACIÓN</span> 25 artículos (43%)</strong>
+                <p style="font-weight: 400;"><strong style="font-weight: 600;">Descripción:</strong> NOM-163, políticas públicas, aranceles, marcos normativos y regulación de eficiencia energética vehicular.</p>
+                <p style="margin-top: 10px; font-weight: 400;"><strong style="font-weight: 600;">Artículos clave:</strong><br>
+                • NOM-163 Fase 2: oportunidad para metas climáticas (Enero-Marzo 2025)<br>
+                • Aranceles 50% a vehículos chinos genera debate nacional (Sep-Nov 2025)<br>
+                • EMA advierte riesgos si se limita acceso a vehículos eléctricos (Septiembre)<br>
+                • ICCT alerta: flexibilidades NOM-163 diluyen objetivos climáticos (Enero)<br>
+                • México en riesgo de incumplir metas Acuerdo de París por regulación débil</p>
+            </div>
+            
+            <div class="message-item">
+                <strong><span class="category-badge cat-movilidad">🚌 MOVILIDAD LIMPIA</span> 18 artículos (31%)</strong>
+                <p style="font-weight: 400;"><strong style="font-weight: 600;">Descripción:</strong> Vehículos eléctricos, transporte de carga, electrificación de flotas y transición energética.</p>
+                <p style="margin-top: 10px; font-weight: 400;"><strong style="font-weight: 600;">Artículos clave:</strong><br>
+                • Ventas VE crecen 140% anual en 4 años: ICCT (Julio 2025)<br>
+                • Descarbonización del transporte de carga: 24-29% emisiones GEI México (Junio)<br>
+                • Autos eléctricos emiten 73% menos CO₂ en ciclo de vida completo (Julio)<br>
+                • Electrificación de flotas comerciales: ahorro 50% costos operativos (Abril)<br>
+                • Transporte limpio clave para neutralidad climática 2050</p>
+            </div>
+            
+            <div class="message-item">
+                <strong><span class="category-badge cat-tecnologia">⚡ TECNOLOGÍA LIMPIA</span> 8 artículos (14%)</strong>
+                <p style="font-weight: 400;"><strong style="font-weight: 600;">Descripción:</strong> Comparativas tecnológicas, eficiencia energética, innovación y desarrollo de baterías.</p>
+                <p style="margin-top: 10px; font-weight: 400;"><strong style="font-weight: 600;">Artículos clave:</strong><br>
+                • Hidrógeno verde vs vehículos eléctricos a batería (Abril 2025)<br>
+                • Híbridos enchufables: consumo real 3-5 veces mayor que homologado (Abril)<br>
+                • Tecnología de emisiones EGR en vehículos pesados (Abril)<br>
+                • Toyota crisis: demanda híbridos supera capacidad producción (Abril)<br>
+                • Infraestructura de carga: frontera de electromovilidad México</p>
+            </div>
+            
+            <div class="message-item">
+                <strong><span class="category-badge cat-sostenibilidad">🌱 SOSTENIBILIDAD</span> 5 artículos (9%)</strong>
+                <p style="font-weight: 400;"><strong style="font-weight: 600;">Descripción:</strong> Emisiones, calidad del aire, metas climáticas y desempeño ambiental.</p>
+                <p style="margin-top: 10px; font-weight: 400;"><strong style="font-weight: 600;">Artículos clave:</strong><br>
+                • Emisiones CO₂ vehículos terrestres alcanzarán pico en 2025 (Enero)<br>
+                • México en riesgo de no cumplir metas climáticas 2030 (Enero)<br>
+                • Reducción emisiones: cumplimiento Acuerdo de París en riesgo<br>
+                • Calidad del aire urbano: impacto directo vehículos combustión</p>
+            </div>
+            
+            <div class="message-item">
+                <strong><span class="category-badge cat-accesibilidad">🤝 ACCESIBILIDAD</span> 2 artículos (3%)</strong>
+                <p style="font-weight: 400;"><strong style="font-weight: 600;">Descripción:</strong> Acceso económico a vehículos eléctricos, democratización de movilidad limpia.</p>
+                <p style="margin-top: 10px; font-weight: 400;"><strong style="font-weight: 600;">Artículos clave:</strong><br>
+                • Precios VE cayeron 37% (2021-2024) vs +24% combustión: ICCT<br>
+                • Aranceles amenazan democratización acceso a movilidad eléctrica</p>
+            </div>
+        </div>
+        
+        <!-- Mensajes Clave -->
+        <div class="messages-section">
+            <h3>🔑 Mensajes Clave México</h3>
+            
+            <div class="message-item">
+                <strong style="font-weight: 600;">🇲🇽 MENSAJE 1: NOM-163 Necesita Fortalecimiento Urgente</strong>
+                <p style="font-weight: 400;">• <strong style="font-weight: 600;">ICCT alerta:</strong> NOM-163 Fase 2 no se alinea con objetivos de electrificación 2030<br>
+                • <strong style="font-weight: 600;">Flexibilidades excesivas</strong> diluyen avances reales en eficiencia energética<br>
+                • <strong style="font-weight: 600;">Recomendación:</strong> Ajustar regulación para acelerar electrificación vehicular<br>
+                • <strong style="font-weight: 600;">Riesgo:</strong> México puede incumplir compromisos Acuerdo de París<br>
+                • <strong style="font-weight: 600;">Impacto:</strong> Solo 2.2% de ventas son vehículos eléctricos a finales 2024</p>
+            </div>
+            
+            <div class="message-item">
+                <strong style="font-weight: 600;">🚗 MENSAJE 2: Aranceles Amenazan Democratización de Movilidad Eléctrica</strong>
+                <p style="font-weight: 400;">• <strong style="font-weight: 600;">Arancel 50%</strong> a vehículos chinos genera amplio debate nacional<br>
+                • <strong style="font-weight: 600;">ICCT documenta:</strong> Entre 2021-2024, VE bajaron 37% precio vs +24% combustión<br>
+                • <strong style="font-weight: 600;">EMA advierte:</strong> Incrementar costos VE es retroceso en política climática<br>
+                • <strong style="font-weight: 600;">Consecuencia:</strong> Frenar adopción masiva y acceso equitativo a VE<br>
+                • <strong style="font-weight: 600;">Oportunidad perdida:</strong> México productor automotriz, pero VE son importados</p>
+            </div>
+            
+            <div class="message-item">
+                <strong style="font-weight: 600;">📊 MENSAJE 3: Datos Científicos Contundentes sobre Emisiones</strong>
+                <p style="font-weight: 400;">• <strong style="font-weight: 600;">VE emiten 73% menos CO₂</strong> en ciclo de vida completo vs gasolina<br>
+                • <strong style="font-weight: 600;">Transporte de carga:</strong> 24-29% de emisiones GEI totales en México<br>
+                • <strong style="font-weight: 600;">2025: Año pico</strong> de emisiones CO₂ del transporte terrestre<br>
+                • <strong style="font-weight: 600;">Ventas VE crecen 140% anual</strong> en últimos 4 años (ICCT)<br>
+                • <strong style="font-weight: 600;">Realidad:</strong> Autos eléctricos son 4 veces más limpios que gasolina</p>
+            </div>
+        </div>
+        
+        <!-- Palabras Clave -->
+        <div class="messages-section">
+            <h3>🏷️ Palabras Clave Más Frecuentes</h3>
+            <div class="tags-container">
+                <span class="tag">ICCT</span>
+                <span class="tag">NOM-163</span>
+                <span class="tag">Vehículos Eléctricos</span>
+                <span class="tag">Leticia Pineda</span>
+                <span class="tag">Aranceles</span>
+                <span class="tag">Electromovilidad</span>
+                <span class="tag">Descarbonización</span>
+                <span class="tag">Transporte Limpio</span>
+                <span class="tag">Emisiones CO₂</span>
+                <span class="tag">EMA</span>
+                <span class="tag">Eficiencia Energética</span>
+                <span class="tag">Metas Climáticas</span>
+                <span class="tag">Transporte de Carga</span>
+                <span class="tag">Gases Efecto Invernadero</span>
+                <span class="tag">Movilidad Sostenible</span>
+                <span class="tag">Regulación Vehicular</span>
+            </div>
+        </div>
+        
+        <!-- Medios y Periodistas -->
+        <div class="messages-section">
+            <h3>📰 Medios y Periodistas Destacados</h3>
+            <div class="media-grid">
+                <div class="media-card">
+                    <h4>🇲🇽 Top Medios México</h4>
+                    <ul>
+                        <li><strong>Lado Mx</strong> - 12 art.</li>
+                        <li><strong>El Universal</strong> - 5 art.</li>
+                        <li><strong>T21</strong> - 4 art.</li>
+                        <li><strong>La Jornada</strong> - 3 art.</li>
+                        <li><strong>El Economista</strong> - 2 art.</li>
+                        <li><strong>Vanguardia</strong> - 2 art.</li>
+                        <li><strong>Noti Mx</strong> - 2 art.</li>
+                        <li><strong>Mexico Industry</strong> - 2 art.</li>
+                        <li><strong>Tijuana Informativo</strong> - 2 art.</li>
+                        <li><strong>Energy21</strong> - 1 art.</li>
+                    </ul>
+                </div>
+                
+                <div class="media-card">
+                    <h4>✍️ Periodistas Destacados</h4>
+                    <ul>
+                        <li><strong>Mónica Valladolid</strong> (Lado Mx)</li>
+                        <li><strong>Karina Quintero</strong> (T21)</li>
+                        <li><strong>Ofelia Rangel</strong> (Revista Magazzine)</li>
+                        <li><strong>Leo Mellado</strong> (Tacómetro Publimetro)</li>
+                        <li><strong>Lilia González</strong> (El Economista)</li>
+                        <li><strong>Enrique Torres</strong> (El Heraldo de México)</li>
+                    </ul>
+                </div>
+                
+                <div class="media-card">
+                    <h4>🎤 Vocera Principal ICCT</h4>
+                    <ul>
+                        <li><strong>Leticia Pineda</strong></li>
+                        <li>Directora Regional México y Canadá</li>
+                        <li>Citada en 12 artículos (21%)</li>
+                        <li>Temas: NOM-163, transporte carga</li>
+                        <li>Electrificación y eficiencia vehicular</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Voceros -->
+        <div class="messages-section">
+            <h3>🎤 Voceros y Expertos ICCT Citados</h3>
+            <div class="message-item">
+                <strong style="font-weight: 600;">ICCT - The International Council on Clean Transportation</strong>
+                <p style="font-weight: 400;">• <strong style="font-weight: 600;">Leticia Pineda</strong> - Directora Regional para México y Canadá (citada en 12 artículos)<br>
+                • <strong style="font-weight: 600;">Felipe Rodríguez</strong> - Director de Vehículos Pesados<br>
+                • <strong style="font-weight: 600;">Hussein Basma</strong> - Investigador (infraestructura de carga)<br>
+                • <strong style="font-weight: 600;">ICCT Global</strong> - Estudios emisiones y eficiencia energética</p>
+            </div>
+            <div class="message-item">
+                <strong style="font-weight: 600;">Organizaciones Aliadas y Referenciadas</strong>
+                <p style="font-weight: 400;">• <strong style="font-weight: 600;">EMA</strong> - Electro Movilidad Asociación (co-mencionada en 15 artículos)<br>
+                • <strong style="font-weight: 600;">ZEBRA</strong> - Zero Emission Bus Rapid-deployment Accelerator<br>
+                • <strong style="font-weight: 600;">PNUMA</strong> - Programa Naciones Unidas para el Medio Ambiente<br>
+                • <strong style="font-weight: 600;">BloombergNEF</strong> - Análisis mercado electromovilidad<br>
+                • <strong style="font-weight: 600;">IEA</strong> - Agencia Internacional de Energía</p>
+            </div>
+        </div>
+        
+        <!-- Coyuntura -->
+        <div class="messages-section">
+            <h3>📅 Coyuntura y Contexto de Publicaciones (Ene-Nov 2025)</h3>
+            
+            <div class="message-item">
+                <strong style="font-weight: 600;">Enero - Marzo 2025: NOM-163 en el Centro del Debate</strong>
+                <p style="font-weight: 400;">• Publicación análisis ICCT sobre NOM-163 Fase 2 y sus limitaciones<br>
+                • Alertas sobre flexibilidades excesivas que diluyen objetivos climáticos<br>
+                • Proyección: 2025 será año pico de emisiones CO₂ transporte terrestre<br>
+                • Llamado urgente actualizar normas eficiencia vehicular para cumplir metas<br>
+                • México en riesgo de incumplir compromisos Acuerdo de París</p>
+            </div>
+            
+            <div class="message-item">
+                <strong style="font-weight: 600;">Abril - Junio 2025: Debate Tecnológico y Competitividad</strong>
+                <p style="font-weight: 400;">• Comparativas rendimiento: hidrógeno verde vs vehículos eléctricos a batería<br>
+                • Análisis consumo real vs homologado en híbridos enchufables (3-5x mayor)<br>
+                • Descarbonización del transporte de carga: 24-29% emisiones GEI México<br>
+                • Tesla y BYD lideran ranking global electrificación (ICCT)<br>
+                • Infraestructura de carga: nueva frontera de electromovilidad</p>
+            </div>
+            
+            <div class="message-item">
+                <strong style="font-weight: 600;">Julio - Septiembre 2025: Datos de Mercado y Evidencia Científica</strong>
+                <p style="font-weight: 400;">• Publicación estudio: ventas VE crecen 140% anual en 4 años (ICCT)<br>
+                • Evidencia contundente: autos eléctricos emiten 73% menos CO₂ ciclo de vida<br>
+                • Debate aranceles a vehículos chinos comienza a generar cobertura<br>
+                • EMA y ICCT presentan posturas sobre acceso democrático a VE<br>
+                • Solo 4.8% de ventas totales corresponden a vehículos eléctricos (2024)</p>
+            </div>
+            
+            <div class="message-item">
+                <strong style="font-weight: 600;">Octubre - Noviembre 2025: Aranceles y Política Pública</strong>
+                <p style="font-weight: 400;">• Arancel 50% a vehículos chinos genera cobertura mediática masiva<br>
+                • EMA cita estudios ICCT: VE bajaron 37% precio (2021-2024) vs +24% combustión<br>
+                • Preocupación sectorial: frenar democratización y acceso a movilidad limpia<br>
+                • Impacto en cumplimiento metas climáticas 2030 bajo escrutinio público<br>
+                • Debate sobre protección industria nacional vs transición energética</p>
+            </div>
+        </div>
+
+        <!-- AVE Detallado -->
+        <div class="messages-section">
+            <h3>💰 AVE (Advertising Value Equivalent) - Análisis Detallado</h3>
+            
+            <div class="message-item">
+                <strong style="font-weight: 600;">Metodología de Cálculo AVE</strong>
+                <p style="font-weight: 400;">El AVE se calcula considerando:<br>
+                • Alcance del medio (UVM - Unique Visitors Monthly)<br>
+                • Engagement generado (likes, shares, comentarios)<br>
+                • Posicionamiento de marca ICCT como fuente experta<br>
+                • Valor publicitario equivalente en medios digitales mexicanos</p>
+            </div>
+            
+            <div class="media-grid">
+                <div class="media-card">
+                    <h4>🇲🇽 México - AVE Desglosado</h4>
+                    <ul>
+                        <li><strong>El Universal:</strong> $85,000</li>
+                        <li><strong>Lado Mx:</strong> $72,000</li>
+                        <li><strong>La Jornada:</strong> $58,000</li>
+                        <li><strong>El Economista:</strong> $48,000</li>
+                        <li><strong>T21 / Medios especializados:</strong> $62,000</li>
+                        <li><strong>Otros medios digitales:</strong> $95,000</li>
+                    </ul>
+                </div>
+                
+                <div class="media-card">
+                    <h4>📊 Resumen Total México</h4>
+                    <ul>
+                        <li><strong>AVE Total:</strong> $420,000 USD</li>
+                        <li><strong>AVE Promedio/Artículo:</strong> $7,241</li>
+                        <li><strong>Engagement Total:</strong> 6,200</li>
+                        <li><strong>Alcance Estimado:</strong> 35M+ impresiones</li>
+                        <li><strong>Medios Únicos:</strong> 28 publicaciones</li>
+                    </ul>
+                </div>
+                
+                <div class="media-card">
+                    <h4>💡 Valor Editorial vs Paid Media</h4>
+                    <ul>
+                        <li><strong>Cobertura editorial:</strong> 3x valor vs publicidad</li>
+                        <li><strong>Credibilidad:</strong> Mayor confianza audiencia</li>
+                        <li><strong>Durabilidad:</strong> Contenido permanente online</li>
+                        <li><strong>SEO:</strong> Posicionamiento orgánico ICCT</li>
+                        <li><strong>Authority:</strong> Fuente técnica reconocida</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuración común para todos los gráficos
+        const commonOptions = {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        font: { 
+                            size: 12,
+                            family: "'Helvetica Neue', Helvetica, Arial, sans-serif"
+                        },
+                        padding: 15
+                    }
+                }
+            }
+        };
+        
+        // 1. Gráfico de Sentimiento
+        new Chart(document.getElementById('sentimientoChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Neutral', 'Positivo'],
+                datasets: [{
+                    data: [43, 15],
+                    backgroundColor: ['#95a5a6', '#2ecc71'],
+                    borderWidth: 3,
+                    borderColor: '#fff'
+                }]
+            },
+            options: {
+                ...commonOptions,
+                plugins: {
+                    ...commonOptions.plugins,
+                    legend: {
+                        position: 'right'
+                    }
+                }
+            }
+        });
+        
+        // 2. Timeline Mensual (Enero - Noviembre)
+        new Chart(document.getElementById('timelineChart'), {
+            type: 'line',
+            data: {
+                labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov'],
+                datasets: [{
+                    label: 'Artículos México',
+                    data: [8, 5, 4, 5, 3, 3, 7, 2, 12, 6, 3],
+                    borderColor: '#007D93',
+                    backgroundColor: 'rgba(0, 125, 147, 0.1)',
+                    tension: 0.4,
+                    fill: true,
+                    borderWidth: 3,
+                    pointRadius: 5,
+                    pointHoverRadius: 7
+                }]
+            },
+            options: {
+                ...commonOptions,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: { stepSize: 2 },
+                        grid: { color: '#f0f0f0' }
+                    },
+                    x: {
+                        grid: { display: false }
+                    }
+                }
+            }
+        });
+        
+        // 3. Top 10 Medios
+        new Chart(document.getElementById('mediosChart'), {
+            type: 'bar',
+            data: {
+                labels: [
+                    'Lado Mx',
+                    'El Universal',
+                    'T21',
+                    'La Jornada',
+                    'El Economista',
+                    'Vanguardia',
+                    'Noti Mx',
+                    'Mexico Industry',
+                    'Tijuana Informativo',
+                    'Energy21'
+                ],
+                datasets: [{
+                    label: 'Artículos Publicados',
+                    data: [12, 5, 4, 3, 2, 2, 2, 2, 2, 1],
+                    backgroundColor: '#007D93',
+                    borderRadius: 8,
+                    borderWidth: 2,
+                    borderColor: '#006680'
+                }]
+            },
+            options: {
+                ...commonOptions,
+                indexAxis: 'y',
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        ticks: { stepSize: 2 },
+                        grid: { color: '#f0f0f0' }
+                    },
+                    y: {
+                        grid: { display: false }
+                    }
+                }
+            }
+        });
+        
+        // 4. Categorías Temáticas (Usando Secondary Colors ICCT)
+        new Chart(document.getElementById('temasChart'), {
+            type: 'pie',
+            data: {
+                labels: [
+                    'Regulación (43%)',
+                    'Movilidad Limpia (31%)',
+                    'Tecnología Limpia (14%)',
+                    'Sostenibilidad (9%)',
+                    'Accesibilidad (3%)'
+                ],
+                datasets: [{
+                    data: [25, 18, 8, 5, 2],
+                    backgroundColor: [
+                        '#9c1b3e',  // Regulación (Red)
+                        '#007D93',  // Movilidad (ICCT Blue)
+                        '#632A7A',  // Tecnología (Purple)
+                        '#398439',  // Sostenibilidad (Green)
+                        '#F1AE1D'   // Accesibilidad (Orange Yellow)
+                    ],
+                    borderWidth: 3,
+                    borderColor: '#fff'
+                }]
+            },
+            options: {
+                ...commonOptions,
+                plugins: {
+                    ...commonOptions.plugins,
+                    legend: {
+                        position: 'right',
+                        labels: {
+                            font: { 
+                                size: 11,
+                                family: "'Helvetica Neue', Helvetica, Arial, sans-serif"
+                            },
+                            padding: 12
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
